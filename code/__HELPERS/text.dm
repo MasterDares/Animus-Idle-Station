@@ -22,6 +22,67 @@
  * Text sanitization
  */
 
+/proc/sanitize_simple(var/t,var/list/repl_chars = list("ÿ"="&#255;", "\n"="#","\t"="#","ï¿½"="ï¿½"))
+	for(var/char in repl_chars)
+		var/index = findtext(t, char)
+		while(index)
+			t = copytext(t, 1, index) + repl_chars[char] + copytext(t, index+1)
+			index = findtext(t, char)
+	return t
+
+proc/sanitize_russian(var/msg, var/html = 0)
+	var/rep
+	if(html)
+		rep = "&#x44F;"
+	else
+		rep = "&#255;"
+	var/index = findtext(msg, "ÿ")
+	while(index)
+		msg = copytext(msg, 1, index) + rep + copytext(msg, index + 1)
+		index = findtext(msg, "ÿ")
+	return msg
+
+/proc/rhtml_encode(var/msg, var/html = 0)
+	var/rep
+	if(html)
+		rep = "&#x44F;"
+	else
+		rep = "&#255;"
+	var/list/c = text2list(msg, "ÿ")
+	if(c.len == 1)
+		c = text2list(msg, rep)
+		if(c.len == 1)
+			return html_encode(msg)
+	var/out = ""
+	var/first = 1
+	for(var/text in c)
+		if(!first)
+			out += rep
+		first = 0
+		out += html_encode(text)
+	return out
+
+/proc/rhtml_decode(var/msg, var/html = 0)
+	var/rep
+	if(html)
+		rep = "&#x44F;"
+	else
+		rep = "&#255;"
+	var/list/c = text2list(msg, "ÿ")
+	if(c.len == 1)
+		c = text2list(msg, "&#255;")
+		if(c.len == 1)
+			c = text2list(msg, "&#x4FF")
+			if(c.len == 1)
+				return html_decode(msg)
+	var/out = ""
+	var/first = 1
+	for(var/text in c)
+		if(!first)
+			out += rep
+		first = 0
+		out += html_decode(text)
+
 //Used for preprocessing entered text
 /proc/sanitize(var/input, var/max_length = MAX_MESSAGE_LEN, var/encode = 1, var/trim = 1, var/extra = 1)
 	if(!input)
@@ -37,7 +98,7 @@
 		//In addition to processing html, html_encode removes byond formatting codes like "\red", "\i" and other.
 		//It is important to avoid double-encode text, it can "break" quotes and some other characters.
 		//Also, keep in mind that escaped characters don't work in the interface (window titles, lower left corner of the main window, etc.)
-		input = html_encode(input)
+		input = rhtml_encode(input)
 	else
 		//If not need encode text, simply remove < and >
 		//note: we can also remove here byond formatting codes: 0xFF + next byte
@@ -54,7 +115,7 @@
 //If you have a problem with sanitize() in chat, when quotes and >, < are displayed as html entites -
 //this is a problem of double-encode(when & becomes &amp;), use sanitize() with encode=0, but not the sanitizeSafe()!
 /proc/sanitizeSafe(var/input, var/max_length = MAX_MESSAGE_LEN, var/encode = 1, var/trim = 1, var/extra = 1)
-	return sanitize(replace_characters(input, list(">"=" ","<"=" ", "\""="'"), max_length, encode, trim, extra))
+	return sanitize(replace_characters(input, list(">"=" ","<"=" ", "\""="'")), max_length, encode, trim, extra)
 
 //Filters out undesirable characters from names
 /proc/sanitizeName(var/input, var/max_length = MAX_NAME_LEN, var/allow_numbers = 0)
@@ -136,7 +197,7 @@
 
 //Old variant. Haven't dared to replace in some places.
 /proc/sanitize_old(var/t,var/list/repl_chars = list("\n"="#","\t"="#"))
-	return html_encode(replace_characters(t,repl_chars))
+	return rhtml_encode(replace_characters(t,repl_chars))
 
 /*
  * Text searches
@@ -183,7 +244,7 @@
 
 /proc/replace_characters(var/t,var/list/repl_chars)
 	for(var/char in repl_chars)
-		replacetext(t, char, repl_chars[char])
+		t = replacetext(t, char, repl_chars[char])
 	return t
 
 //Adds 'u' number of zeros ahead of the text 't'
@@ -225,6 +286,31 @@
 //Returns a string with the first element of the string capitalized.
 /proc/capitalize(var/t as text)
 	return uppertext(copytext(t, 1, 2)) + copytext(t, 2)
+
+//This proc strips html properly, remove < > and all text between
+//for complete text sanitizing should be used sanitize()
+/proc/strip_html_properly(var/input)
+	if(!input)
+		return
+	var/opentag = 1 //These store the position of < and > respectively.
+	var/closetag = 1
+	while(1)
+		opentag = findtext(input, "<")
+		closetag = findtext(input, ">")
+		if(closetag && opentag)
+			if(closetag < opentag)
+				input = copytext(input, (closetag + 1))
+			else
+				input = copytext(input, 1, opentag) + copytext(input, (closetag + 1))
+		else if(closetag || opentag)
+			if(opentag)
+				input = copytext(input, 1, opentag)
+			else
+				input = copytext(input, (closetag + 1))
+		else
+			break
+
+	return input
 
 //This proc fills in all spaces with the "replace" var (* by default) with whatever
 //is in the other string at the same spot (assuming it is not a replace char).
@@ -274,7 +360,11 @@ proc/TextPreview(var/string,var/len=40)
 		else
 			return string
 	else
-		return "[copytext(string, 1, 37)]..."
+		return "[copytext_preserve_html(string, 1, 37)]..."
+
+//alternative copytext() for encoded text, doesn't break html entities (&#34; and other)
+/proc/copytext_preserve_html(var/text, var/first, var/last)
+	return rhtml_encode(copytext(rhtml_decode(text), first, last))
 
 //For generating neat chat tag-images
 //The icon var could be local in the proc, but it's a waste of resources
