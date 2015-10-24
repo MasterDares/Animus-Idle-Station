@@ -24,11 +24,10 @@ var/list/adminhelp_ignored_words = list("unknown","the","a","an","of","monkey","
 	if(!msg)
 		return
 	msg = sanitize(msg)
-	msg = sanitize_russian(msg)
 	if(!msg)
 		return
 	var/original_msg = msg
-/*
+
 	//explode the input msg into a list
 	var/list/msglist = text2list(msg, " ")
 
@@ -81,10 +80,10 @@ var/list/adminhelp_ignored_words = list("unknown","the","a","an","of","monkey","
 							msg += "<b><font color='black'>[original_word] (<A HREF='?_src_=holder;adminmoreinfo=\ref[found]'>?</A>)</font></b> "
 							continue
 			msg += "[original_word] "
-*/
+
 	if(!mob) //this doesn't happen
 		return
-/*
+
 	var/ai_cl
 	if(ai_found)
 		ai_cl = " (<A HREF='?_src_=holder;adminchecklaws=\ref[mob]'>CL</A>)"
@@ -95,9 +94,7 @@ var/list/adminhelp_ignored_words = list("unknown","the","a","an","of","monkey","
 	var/mentor_msg = "\blue <b><font color=red>Request for Help: </font>[get_options_bar(mob, 4, 1, 1, 0)][ai_cl]:</b> [msg]"
 	STUI.staff.Add("\[[time_stamp()]] <font color=red>AHELP: </font><font color='#0066ff'>[key_name(mob)]:</b> [msg]</font><br>")
 	STUI.processing |= 3
-*/
-//	msg = "\blue <b><font color=red>Request for Help:: </font>[get_options_bar(mob, 2, 1, 1)][ai_cl]:</b> [msg]"
-	msg = "\blue <b><font color=red>Request for Help:: </font>[get_options_bar(mob, 2, 1, 1)]:</b> [msg]"
+	msg = "\blue <b><font color=red>Request for Help:: </font>[get_options_bar(mob, 2, 1, 1)][ai_cl]:</b> [msg]"
 
 	var/admin_number_afk = 0
 
@@ -108,21 +105,19 @@ var/list/adminhelp_ignored_words = list("unknown","the","a","an","of","monkey","
 
 			X << 'sound/effects/adminhelp.ogg'
 
-/*			if(X.holder.rights == R_MENTOR)
+			if(X.holder.rights == R_MENTOR)
 				X << mentor_msg		// Mentors won't see coloring of names on people with special_roles (Antags, etc.)
 			else
-*/				X << msg
+				X << msg
 
 	//show it to the person adminhelping too
 	src << "<font color='blue'>PM to-<b>Staff </b>: [original_msg]</font>"
 
 	var/admin_number_present = admins.len - admin_number_afk
 	log_adminpm("HELP: [key_name(src)]: [original_msg] - heard by [admin_number_present] non-AFK admins.")
-
-/*	if(admin_number_present <= 0)
+	if(admin_number_present <= 0)
 		send2adminirc("Request for Help from [key_name(src)]: [rhtml_decode(original_msg)] - !![admin_number_afk ? "All admins AFK ([admin_number_afk])" : "No admins online"]!!")
 	else
 		send2adminirc("Request for Help from [key_name(src)]: [rhtml_decode(original_msg)]")
-*/
 	feedback_add_details("admin_verb","AH") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 	return

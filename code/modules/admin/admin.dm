@@ -283,7 +283,7 @@ var/global/floorIsLava = 0
 			if(index == page)
 				dat += "</b>"
 
-	usr << browse(sanitize_russian(dat, 1), "window=player_notes;size=400x400")
+	usr << browse(dat, "window=player_notes;size=400x400")
 
 
 /datum/admins/proc/player_has_info(var/key as text)
@@ -331,7 +331,7 @@ var/global/floorIsLava = 0
 	dat += "<A href='?src=\ref[src];add_player_info=[key]'>Add Comment</A><br>"
 
 	dat += "</body></html>"
-	usr << browse(sanitize_russian(dat, 1), "window=adminplayerinfo;size=480x480")
+	usr << browse(dat, "window=adminplayerinfo;size=480x480")
 
 
 
@@ -576,7 +576,7 @@ var/global/floorIsLava = 0
 
 	//world << "Channelname: [src.admincaster_feed_channel.channel_name] [src.admincaster_feed_channel.author]"
 	//world << "Msg: [src.admincaster_feed_message.author] [src.admincaster_feed_message.body]"
-	usr << browse(sanitize_russian(dat, 1), "window=admincaster_main;size=400x600")
+	usr << browse(dat, "window=admincaster_main;size=400x600")
 	onclose(usr, "admincaster_main")
 
 
@@ -591,7 +591,7 @@ var/global/floorIsLava = 0
 			r = copytext( r, 1, findtext(r,"##") )//removes the description
 		dat += text("<tr><td>[t] (<A href='?src=\ref[src];removejobban=[r]'>unban</A>)</td></tr>")
 	dat += "</table>"
-	usr << browse(sanitize_russian(dat, 1), "window=ban;size=400x400")
+	usr << browse(dat, "window=ban;size=400x400")
 
 /datum/admins/proc/Game()
 	if(!check_rights(0))	return

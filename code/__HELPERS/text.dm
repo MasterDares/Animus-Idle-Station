@@ -32,19 +32,14 @@
 
 proc/sanitize_russian(var/msg, var/html = 0)
 	var/rep
-	var/index
 	if(html)
 		rep = "&#x44F;"
-		index = findtext(msg, "&#255;")
-		while(index)
-			msg = copytext(msg, 1, index) + rep + copytext(msg, index + 6)
-			index = findtext(msg, "&#255;")
 	else
 		rep = "&#255;"
-	index = findtext(msg, "?")
+	var/index = findtext(msg, "ÿ")
 	while(index)
 		msg = copytext(msg, 1, index) + rep + copytext(msg, index + 1)
-		index = findtext(msg, "?")
+		index = findtext(msg, "ÿ")
 	return msg
 
 /proc/rhtml_encode(var/msg, var/html = 0)

@@ -175,7 +175,7 @@
 
 	dat += "</div></body></html>"
 
-	usr << browse(sanitize_russian(dat, 1), "window=\ref[computer];size=670x510")
+	usr << browse(dat, "window=\ref[computer];size=670x510")
 	onclose(usr, "\ref[computer]")
 
  	// STATUS BAR
@@ -212,7 +212,7 @@
 		var/obj/item/part/computer/C = locate(href_list["viewperipheral"])
 		if(!istype(C) || (C.loc != src.computer))
 			return
-
+		
 		if(istype(C,/obj/item/part/computer/storage))
 			current = C
 			interact()

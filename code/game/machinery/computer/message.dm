@@ -254,7 +254,7 @@
 
 	dat += "</body>"
 	message = defaultmsg
-	user << browse(sanitize_russian(dat, 1), "window=message;size=700x700")
+	user << browse(dat, "window=message;size=700x700")
 	onclose(user, "message")
 	return
 
