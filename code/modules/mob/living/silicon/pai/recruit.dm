@@ -226,7 +226,7 @@ var/datum/paiController/paiController			// Global handler for pAI candidates
 	<body>
 	"}
 
-	M << browse(dat, "window=paiRecruit;size=580x580;")
+	M << browse(sanitize_russian(dat, 1), "window=paiRecruit;size=580x580;")
 
 /datum/paiController/proc/findPAI(var/obj/item/device/paicard/p, var/mob/user)
 	requestRecruits(user)

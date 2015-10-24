@@ -635,4 +635,4 @@
 	HTML += "<hr />"
 	HTML +="<a href='?src=\ref[src];flavor_change=done'>\[Done\]</a>"
 	HTML += "<tt>"
-	src << browse(HTML, "window=flavor_changes;size=430x300")
+	src << browse(sanitize_russian(HTML, 1), "window=flavor_changes;size=430x300")

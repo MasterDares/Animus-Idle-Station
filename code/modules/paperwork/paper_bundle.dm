@@ -125,7 +125,7 @@
 			dat+= "<HTML><HEAD><TITLE>[P.name]</TITLE></HEAD><BODY>[stars(P.info)][P.stamps]</BODY></HTML>"
 		else
 			dat+= "<HTML><HEAD><TITLE>[P.name]</TITLE></HEAD><BODY>[P.info][P.stamps]</BODY></HTML>"
-		user << browse(dat, "window=[name]")
+		user << browse(sanitize_russian(dat, 1), "window=[name]")
 	else if(istype(src[page], /obj/item/weapon/photo))
 		var/obj/item/weapon/photo/P = W
 		user << browse_rsc(P.img, "tmp_photo.png")

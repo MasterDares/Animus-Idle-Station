@@ -585,7 +585,7 @@ datum/preferences
 	HTML += "</center></tt>"
 
 	user << browse(null, "window=preferences")
-	user << browse(HTML, "window=records;size=350x300")
+	user << browse(sanitize_russian(HTML, 1), "window=records;size=350x300")
 	return
 
 /datum/preferences/proc/SetSpecies(mob/user)
@@ -710,7 +710,7 @@ datum/preferences
 	HTML +="<a href='?src=\ref[user];preference=flavor_text;task=done'>\[Done\]</a>"
 	HTML += "<tt>"
 	user << browse(null, "window=preferences")
-	user << browse(HTML, "window=flavor_text;size=430x300")
+	user << browse(sanitize_russian(HTML, 1), "window=flavor_text;size=430x300")
 	return
 
 /datum/preferences/proc/SetFlavourTextRobot(mob/user)
@@ -729,7 +729,7 @@ datum/preferences
 	HTML +="<a href='?src=\ref[user];preference=flavour_text_robot;task=done'>\[Done\]</a>"
 	HTML += "<tt>"
 	user << browse(null, "window=preferences")
-	user << browse(HTML, "window=flavour_text_robot;size=430x300")
+	user << browse(sanitize_russian(HTML, 1), "window=flavour_text_robot;size=430x300")
 	return
 
 /datum/preferences/proc/GetPlayerAltTitle(datum/job/job)

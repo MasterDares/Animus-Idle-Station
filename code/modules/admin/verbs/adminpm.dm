@@ -65,6 +65,8 @@
 		msg = sanitize(msg)
 		if(!msg)	return
 
+	msg = sanitize_russian(msg)
+
 	var/recieve_pm_type = "Player"
 	if(holder)
 		//mod PMs are maroon
